@@ -2,7 +2,7 @@ angular.module('stasiator.controllers', [])
 
   .controller('imageCtrl', function ($scope, $cordovaCamera) {
 
-    $scope.status = {text: "Test"};
+    $scope.status = {text: ""};
 
 
     document.addEventListener("deviceready", function() {
@@ -12,8 +12,8 @@ angular.module('stasiator.controllers', [])
         sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
         allowEdit: true,
         encodingType: Camera.EncodingType.JPEG,
-        targetWidth: 100,
-        targetHeight: 100,
+        targetWidth: 300,
+        targetHeight: 300,
         popoverOptions: CameraPopoverOptions,
         saveToPhotoAlbum: false
       };
@@ -21,10 +21,7 @@ angular.module('stasiator.controllers', [])
       $scope.selectPicture = function () {
         $cordovaCamera.getPicture(options)
           .then(function (u) {
-            //$scope.imgURI =  u;
-            //getPictureSuccess(u);
-            var image = document.getElementById('image');
-            image.src = "data:image/jpeg;base64," + u;
+            getPictureSuccess(u);
           })
           .catch(function (e) {
             getPictureError(e);
@@ -38,10 +35,9 @@ angular.module('stasiator.controllers', [])
     };
 
     var getPictureSuccess = function (u) {
-      $scope.imgURI = u;
-      //$scope.img.src = u;
-      //console.log($scope.img.src);
-      //$scope.status = {text: "Got image: " + $scope.img.src};
+      var image = document.getElementById('image');
+      image.src = "data:image/jpeg;base64," + u;
+      $scope.status = {text: "Image info: "};
 
     };
 

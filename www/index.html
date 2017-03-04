@@ -46,11 +46,11 @@
   </ion-header-bar>
 
   <ion-content class="padding" ng-controller="imageCtrl">
-    <button class="button button-assertive button-full" ng-click="selectPicture()">Select Photo</button>
+    <button class="button button-calm button-full" ng-click="selectPicture()">Select Image</button>
     <img id="image">
-    <p>{{status.text}}</p>
-
-    <div><p ng-bind-html="status.text"></p></div>
+    <div ng-if="status.text">
+      <p ng-bind-html="status.text"></p>
+    </div>
 
   </ion-content>
 
