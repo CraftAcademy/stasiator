@@ -17,6 +17,6 @@ angular.module('stasiator', ['ionic', 'stasiator.controllers', 'stasiator.servic
     });
   })
   .config(function($compileProvider) {
-    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|content|file|assets-library):|data:image\//);
+    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|content|assets-library|file):/);
 
   });

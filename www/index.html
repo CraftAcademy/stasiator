@@ -36,7 +36,6 @@
   <script src="js/app.js"></script>
   <script src="js/controllers.js"></script>
   <script src="js/services.js"></script>
-  <script src="lib/exif.js"></script>
 </head>
 <body ng-app="stasiator">
 
@@ -47,10 +46,12 @@
 
   <ion-content class="padding" ng-controller="imageCtrl">
     <button class="button button-calm button-full" ng-click="selectPicture()">Select Image</button>
-    <img id="image">
-    <div ng-if="status.text">
-      <p ng-bind-html="status.text"></p>
+    <div>
+      <p>{{status.text}}</p>
+      <img id="image">
     </div>
+
+
 
   </ion-content>
 
