@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
   <meta http-equiv="Content-Security-Policy"
-        content="default-src *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *">
+        content="default-src *; style-src * 'unsafe-inline'; media-src *; img-src *; script-src * 'unsafe-inline' 'unsafe-eval'">
+
   <title></title>
 
   <link rel="manifest" href="manifest.json">
@@ -20,6 +21,8 @@
 
   <link href="lib/ionic/css/ionic.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
+  <link href="lib/leaflet/leaflet.css" rel="stylesheet">
+
 
   <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
   <link href="css/ionic.app.css" rel="stylesheet">
@@ -36,6 +39,7 @@
   <script src="js/app.js"></script>
   <script src="js/controllers.js"></script>
   <script src="js/services.js"></script>
+  <script src="lib/leaflet/leaflet.js"></script>
 </head>
 <body ng-app="stasiator">
 
@@ -45,12 +49,12 @@
   </ion-header-bar>
 
   <ion-content class="padding" ng-controller="imageCtrl">
-    <button class="button button-calm button-full" ng-click="selectPicture()">Select Image</button>
-    <div>
+    <div id="map"></div>
+    <div id="over_map">
+      <button class="button button-calm button-full" ng-click="selectPicture()">Select Image</button>
       <p>{{status.text}}</p>
       <img id="image">
     </div>
-
 
 
   </ion-content>

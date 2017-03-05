@@ -1,8 +1,11 @@
 angular.module('stasiator.controllers', [])
 
   .controller('imageCtrl', function ($scope, $cordovaCamera, Location) {
-
+    var lat, long, map;
+    var image = document.getElementById('image');
     $scope.status = {text: ""};
+
+    Location.addMap();
 
 
     document.addEventListener("deviceready", function () {
@@ -26,24 +29,30 @@ angular.module('stasiator.controllers', [])
             getPictureError(e);
           }, false);
       };
+
+      var getPictureError = function (e) {
+        alert('Error getting image: ' + e);
+      };
+
+      var getPictureSuccess = function (imageData) {
+        image.src = imageData.replace("assets-library://", "cdvfile://localhost/assets-library/");
+
+        CordovaExif.readData(image.src, function(exifObject) {
+          $scope.status.text = Location.getCoordinates(exifObject);
+          //$scope.status.text = {lat: 63.53, long:-19.51};
+          console.log($scope.status.text);
+          debugger;
+          $scope.$apply();
+          lat = $scope.status.text.lat;
+          long = $scope.status.text.long;
+          map.setView([lat, long], 13);
+          L.marker([lat, long]).addTo(map);
+
+
+        });
+
+      };
     });
 
-
-    var getPictureError = function (e) {
-      alert('Error getting image: ' + e);
-    };
-
-    var getPictureSuccess = function (imageData) {
-      var image = document.getElementById('image');
-      image.src = imageData.replace("assets-library://", "cdvfile://localhost/assets-library/");
-
-      CordovaExif.readData(image.src, function(exifObject) {
-        $scope.status.text = Location.getCoordinates(exifObject);
-        console.log($scope.status.text);
-        $scope.$apply();
-
-      });
-
-    };
-
   });
+

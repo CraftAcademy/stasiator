@@ -15,7 +15,21 @@ angular.module('stasiator.services', [])
         }
 
         return {lat: $latitude, long: $longitude}
+      },
+
+      addMap: function(){
+        var map;
+        map = L.map('map');
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+          attribution: 'Craft Acadeny Labs',
+          maxZoom: 18,
+          id: 'mapbox.outdoors',
+          accessToken: 'pk.eyJ1IjoiYXF1YWFtYmVyIiwiYSI6ImNpejVreGVxNzAwNTEyeXBnbWc5eXNlcTYifQ.ah37yE5P2LH9LVzNelgymQ'
+        }).addTo(map);
+        map.setView([63.53, -19.51], 10);
+
+        return map;
       }
     }
 
-  })
+  });

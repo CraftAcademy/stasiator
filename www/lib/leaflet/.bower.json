@@ -1,0 +1,13 @@
+{
+  "name": "leaflet",
+  "_cacheHeaders": {
+    "ETag": "\"10b996c28b06382cc64abe1ca8745535\"",
+    "Last-Modified": "Mon, 23 Jan 2017 11:12:01 GMT",
+    "Content-Length": "248943",
+    "Content-Type": "application/zip"
+  },
+  "_release": "e-tag:10b996c28",
+  "_source": "http://cdn.leafletjs.com/leaflet/v1.0.3/leaflet.zip",
+  "_target": "*",
+  "_originalSource": "http://cdn.leafletjs.com/leaflet/v1.0.3/leaflet.zip"
+}
