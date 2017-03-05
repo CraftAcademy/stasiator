@@ -41,9 +41,7 @@ angular.module('stasiator.controllers', [])
           $scope.status.tags = ClarifaiService.getKeywords(image);
 
           $scope.status.text = Location.getCoordinates(exifObject);
-          //$scope.status.text = {lat: 63.53, long:-19.51};
           console.log($scope.status.text);
-          debugger;
           $scope.$apply();
           lat = $scope.status.text.lat;
           long = $scope.status.text.long;
