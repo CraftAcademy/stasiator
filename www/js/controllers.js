@@ -5,7 +5,7 @@ angular.module('stasiator.controllers', [])
     var image = document.getElementById('image');
     $scope.status = {text: ""};
 
-  Location.addBasicMap();
+    //Location.addBasicMap();
 
 
     document.addEventListener("deviceready", function () {
@@ -37,15 +37,21 @@ angular.module('stasiator.controllers', [])
       var getPictureSuccess = function (imageData) {
         image.src = imageData.replace("assets-library://", "cdvfile://localhost/assets-library/");
 
-        CordovaExif.readData(image.src, function(exifObject) {
-          $scope.status.tags = ClarifaiService.getKeywords(image);
+        CordovaExif.readData(image.src, function (exifObject) {
+          ClarifaiService.getKeywords(image).then(function(response){
+            $scope.status.tags = response;
+            $scope.$apply();
+            console.log($scope.status.tags);
+          });
+          Location.getCoordinates(exifObject).then(function(response){
+            $scope.status.text = response;
+            $scope.$apply();
+            lat = $scope.status.text.lat;
+            long = $scope.status.text.long;
+            Location.addMap(lat, long);
+          });
 
-          $scope.status.text = Location.getCoordinates(exifObject);
-          console.log($scope.status.text);
-          $scope.$apply();
-          lat = $scope.status.text.lat;
-          long = $scope.status.text.long;
-          Location.addMap(lat, long);
+
         });
 
       };

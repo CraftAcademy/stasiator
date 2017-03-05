@@ -54,6 +54,7 @@ angular.module('stasiator.services', [])
   .service('ClarifaiService', function () {
     return {
       getKeywords: function (image) {
+        var keywords;
         var path = image.src;
         var app = new Clarifai.App(
           '7WEA3uUeoF-KTvjKVI3g1qWBKNOAcPvyQdj4tCmY',
@@ -64,13 +65,19 @@ angular.module('stasiator.services', [])
           app.models.predict(Clarifai.GENERAL_MODEL, {base64: encodedImage})
             .then(
               function (response) {
-                console.log(JSON.parse(response.request.responseText).outputs[0]);
+                var object = JSON.parse(response.request.responseText).outputs[0];
+                //console.log(object);
+                keywords = getKeywords(object);
+                //console.log(keywords);
+                return keywords;
               },
               function (err) {
                 console.error(err);
+                return err;
               }
             );
         });
+
       }
     };
 
@@ -91,5 +98,13 @@ angular.module('stasiator.services', [])
           reader.readAsDataURL(file);
         });
       }
+    }
+
+    function getKeywords(object){
+      var keywords = [];
+      angular.forEach(object.data.concepts, function(value, key){
+        keywords.push(value.name)
+      });
+      return keywords;
     }
   });
