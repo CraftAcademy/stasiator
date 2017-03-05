@@ -7,7 +7,8 @@ I called it **The Stasiator**.
 [Stasi](https://en.wikipedia.org/wiki/Stasi)
 
 
-Note that this needs to be run with the IOS Simulator or on an IOS Device to work. At this point i'm accessing the images EXIF data (a standard for storing interchange information in digital photography image files using JPEG) and will implement image recognition api to get information about content. 
+Note that this needs to be run with the IOS Simulator or on an IOS Device to work.
+At this point i'm accessing the images [EXIF data](https://en.wikipedia.org/wiki/Exif) (a standard for storing interchange information in digital photography image files using JPEG) and will implement image recognition api to get information about content. 
 
 ### Issues
 For now, I can't get the Leaflet map to show on the IOS page (that part can be tried in with `ionic serve`)
