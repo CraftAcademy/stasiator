@@ -1,6 +1,6 @@
 angular.module('stasiator.controllers', [])
 
-  .controller('imageCtrl', function ($scope, $cordovaCamera, Location) {
+  .controller('imageCtrl', function ($scope, $cordovaCamera, Location, ClarifaiService) {
     var lat, long, map;
     var image = document.getElementById('image');
     $scope.status = {text: ""};
@@ -38,6 +38,8 @@ angular.module('stasiator.controllers', [])
         image.src = imageData.replace("assets-library://", "cdvfile://localhost/assets-library/");
 
         CordovaExif.readData(image.src, function(exifObject) {
+          $scope.status.tags = ClarifaiService.getKeywords(image);
+
           $scope.status.text = Location.getCoordinates(exifObject);
           //$scope.status.text = {lat: 63.53, long:-19.51};
           console.log($scope.status.text);

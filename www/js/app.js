@@ -1,5 +1,5 @@
 
-angular.module('stasiator', ['ionic', 'stasiator.controllers', 'stasiator.services', 'ngCordova'])
+angular.module('stasiator', ['ionic', 'stasiator.controllers', 'stasiator.services', 'ngCordova', 'base64'])
 
   .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {

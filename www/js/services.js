@@ -17,7 +17,7 @@ angular.module('stasiator.services', [])
         return {lat: $latitude, long: $longitude}
       },
 
-      addMap: function(lat, long){
+      addMap: function (lat, long) {
         var map;
         map = L.map('map');
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -32,7 +32,7 @@ angular.module('stasiator.services', [])
 
         return map;
       },
-      addBasicMap: function(){
+      addBasicMap: function () {
         var map;
         map = L.map('map');
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -48,4 +48,48 @@ angular.module('stasiator.services', [])
       }
     }
 
+  })
+
+
+  .service('ClarifaiService', function () {
+    return {
+      getKeywords: function (image) {
+        var path = image.src;
+        var app = new Clarifai.App(
+          '7WEA3uUeoF-KTvjKVI3g1qWBKNOAcPvyQdj4tCmY',
+          'HzTEezVKOnsWbR34JgUpuC4t6skZ8qh3zw6E6EYX'
+        );
+        getFileContentAsBase64(path, function (response) {
+          var encodedImage = response.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
+          app.models.predict(Clarifai.GENERAL_MODEL, {base64: encodedImage})
+            .then(
+              function (response) {
+                console.log(JSON.parse(response.request.responseText).outputs[0]);
+              },
+              function (err) {
+                console.error(err);
+              }
+            );
+        });
+      }
+    };
+
+    function getFileContentAsBase64(path, callback) {
+      window.resolveLocalFileSystemURL(path, success, error);
+
+      function error(e) {
+        alert('Cannot found requested file');
+      }
+
+      function success(fileEntry) {
+        fileEntry.file(function (file) {
+          var reader = new FileReader();
+          reader.onloadend = function (e) {
+            var content = this.result;
+            callback(content);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    }
   });
