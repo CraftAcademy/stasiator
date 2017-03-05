@@ -9,6 +9,7 @@
     </author>
   <content src="index.html"/>
   <access origin="*"/>
+  <allow-navigation href="*" />
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
@@ -20,7 +21,6 @@
   <feature name="StatusBar">
     <param name="ios-package" onload="true" value="CDVStatusBar"/>
   </feature>
-  <allow-navigation href="http://192.168.1.216:8100"/>
   <platform name="ios">
     <preference name="CameraUsesGeolocation" value="true" />
     <icon height="57" src="resources/ios/icon/icon.png" width="57"/>

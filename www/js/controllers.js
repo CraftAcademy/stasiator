@@ -5,7 +5,7 @@ angular.module('stasiator.controllers', [])
     var image = document.getElementById('image');
     $scope.status = {text: ""};
 
-    Location.addMap();
+  Location.addBasicMap();
 
 
     document.addEventListener("deviceready", function () {
@@ -45,10 +45,7 @@ angular.module('stasiator.controllers', [])
           $scope.$apply();
           lat = $scope.status.text.lat;
           long = $scope.status.text.long;
-          map.setView([lat, long], 13);
-          L.marker([lat, long]).addTo(map);
-
-
+          Location.addMap(lat, long);
         });
 
       };
