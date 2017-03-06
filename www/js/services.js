@@ -20,9 +20,14 @@ angular.module('stasiator.services', [])
 
       addMap: function (lat, long) {
         var map;
+        debugger;
+        if (typeof(map) == 'object') {
+          map.off();
+          map.remove();
+        }
         map = L.map('map');
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-          attribution: 'Craft Acadeny Labs',
+          attribution: 'Craft Academy Labs',
           maxZoom: 18,
           id: 'mapbox.outdoors',
           accessToken: 'pk.eyJ1IjoiYXF1YWFtYmVyIiwiYSI6ImNpejVreGVxNzAwNTEyeXBnbWc5eXNlcTYifQ.ah37yE5P2LH9LVzNelgymQ'
@@ -46,23 +51,27 @@ angular.module('stasiator.services', [])
           '7WEA3uUeoF-KTvjKVI3g1qWBKNOAcPvyQdj4tCmY',
           'HzTEezVKOnsWbR34JgUpuC4t6skZ8qh3zw6E6EYX'
         );
-        $timeout(function () {
+
+        //$timeout(function () {
           getFileContentAsBase64(path, function (response) {
             var encodedImage = response.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
             app.models.predict(Clarifai.GENERAL_MODEL, {base64: encodedImage})
               .then(
                 function (response) {
+                  //console.log(response);
                   var object = JSON.parse(response.request.responseText).outputs[0];
-                  //console.log(object);
-                  return getKeywords(object);
+                  console.log(object);
+                  var tags = getKeywords(object);
+                  console.log(tags);
+                  //return tags;
+                  deferred.resolve(tags);
                 },
                 function (err) {
                   return err;
                 }
               );
           });
-          deferred.resolve();
-        }, 3000);
+        //}, 3000);
         console.log(deferred.promise);
         return deferred.promise;
       }

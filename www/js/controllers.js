@@ -1,8 +1,11 @@
 angular.module('stasiator.controllers', [])
 
-  .controller('imageCtrl', function ($scope, $cordovaCamera, Location, ClarifaiService) {
+  .controller('imageCtrl', function ($scope, $cordovaCamera, Location, ClarifaiService, $ionicLoading) {
     var lat, long, image;
-    $scope.status = {text: ""};
+    $scope.status = {
+      text: "",
+      tags: ""
+    };
 
     //Location.addBasicMap();
 
@@ -20,6 +23,10 @@ angular.module('stasiator.controllers', [])
       };
 
       $scope.selectPicture = function () {
+        $scope.status = {
+          text: "",
+          tags: ""
+        };
         $cordovaCamera.getPicture(options)
           .then(function (imageData) {
             getPictureSuccess(imageData);
@@ -39,12 +46,6 @@ angular.module('stasiator.controllers', [])
         image.src = imageData.replace("assets-library://", "cdvfile://localhost/assets-library/");
         CordovaExif.readData(image.src, function (exifObject) {
           exif = exifObject;
-          ClarifaiService.getKeywords(image).then(
-            function(resp){
-              console.log(resp);
-              $scope.status.tags = resp;
-            }
-          );
           $scope.status.text = Location.getCoordinates(exif);
           lat = $scope.status.text.lat;
           long = $scope.status.text.long;
@@ -55,10 +56,17 @@ angular.module('stasiator.controllers', [])
     });
 
 
-    $scope.getKeywords = function(){
+    $scope.getKeywords = function () {
+      $ionicLoading.show({
+        template: 'Analyzing image...'
+      });
       var image = document.getElementById('image');
-      $scope.status.tags = ClarifaiService.getKeywords(image);
+      ClarifaiService.getKeywords(image)
+        .then(function (resp) {
+          $scope.status.tags = resp;
+          $ionicLoading.hide();
+        });
     }
-    
+
   });
 
