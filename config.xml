@@ -55,6 +55,6 @@
         <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640" />
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
     </platform>
-    <plugin name="cordova-plugin-exif" spec="https://github.com/domax/cordova-exif.git" />
     <plugin name="cordova-plugin-file" spec="~4.3.1" />
+    <plugin name="cordova-plugin-exif" spec="https://github.com/domax/cordova-exif.git" />
 </widget>

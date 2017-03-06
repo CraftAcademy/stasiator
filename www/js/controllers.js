@@ -1,8 +1,7 @@
 angular.module('stasiator.controllers', [])
 
   .controller('imageCtrl', function ($scope, $cordovaCamera, Location, ClarifaiService) {
-    var lat, long, map;
-    var image = document.getElementById('image');
+    var lat, long, image;
     $scope.status = {text: ""};
 
     //Location.addBasicMap();
@@ -35,27 +34,31 @@ angular.module('stasiator.controllers', [])
       };
 
       var getPictureSuccess = function (imageData) {
+        var image = document.getElementById('image');
+        var exif;
         image.src = imageData.replace("assets-library://", "cdvfile://localhost/assets-library/");
-
         CordovaExif.readData(image.src, function (exifObject) {
-          ClarifaiService.getKeywords(image).then(function(response){
-            $scope.status.tags = response;
-            $scope.$apply();
-            console.log($scope.status.tags);
-          });
-          Location.getCoordinates(exifObject).then(function(response){
-            $scope.status.text = response;
-            $scope.$apply();
-            lat = $scope.status.text.lat;
-            long = $scope.status.text.long;
-            Location.addMap(lat, long);
-          });
-
-
+          exif = exifObject;
+          ClarifaiService.getKeywords(image).then(
+            function(resp){
+              console.log(resp);
+              $scope.status.tags = resp;
+            }
+          );
+          $scope.status.text = Location.getCoordinates(exif);
+          lat = $scope.status.text.lat;
+          long = $scope.status.text.long;
+          Location.addMap(lat, long);
+          $scope.$apply();
         });
-
       };
     });
 
+
+    $scope.getKeywords = function(){
+      var image = document.getElementById('image');
+      $scope.status.tags = ClarifaiService.getKeywords(image);
+    }
+    
   });
 

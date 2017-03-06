@@ -1,8 +1,11 @@
+angular.module('stasiator',
+  ['ionic',
+    'stasiator.controllers',
+    'stasiator.services',
+    'ngCordova', 'base64'])
 
-angular.module('stasiator', ['ionic', 'stasiator.controllers', 'stasiator.services', 'ngCordova', 'base64'])
-
-  .run(function($ionicPlatform) {
-    $ionicPlatform.ready(function() {
+  .run(function ($ionicPlatform) {
+    $ionicPlatform.ready(function () {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
       if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -16,7 +19,7 @@ angular.module('stasiator', ['ionic', 'stasiator.controllers', 'stasiator.servic
       }
     });
   })
-  .config(function($compileProvider) {
+  .config(function ($compileProvider) {
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|content|assets-library|file):/);
 
   });
