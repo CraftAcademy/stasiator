@@ -46,17 +46,17 @@
 
 <ion-pane>
   <ion-header-bar class="bar-stable">
-    <h1 class="title">Stasiator</h1>
+    <h1 class="title">Safe For Work</h1>
   </ion-header-bar>
 
   <ion-content class="padding" ng-controller="imageCtrl">
     <div id="map"></div>
     <div id="over_map">
       <button class="button button-calm button-full" ng-click="selectPicture()">Select Image</button>
-      <p>Text: {{status.text}}</p>
-      <p>Tags: {{status.tags}}</p>
+      <p ng-if="status.text">Text: {{status.text}}</p>
+      <p ng-if="status.tags">Tags: {{status.tags}}</p>
       <img id="image">
-      <button class="button button-calm button-full" ng-click="getKeywords()">Get Keywords</button>
+      <button class="button button-calm button-full"  ng-if="imageLoaded" ng-click="getKeywords()">Analyze</button>
     </div>
 
   </ion-content>

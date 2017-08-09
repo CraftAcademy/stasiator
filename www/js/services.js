@@ -1,6 +1,6 @@
 angular.module('stasiator.services', [])
 
-  .service('Location', function (ClarifaiService) {
+  .service('LocationService', function (ClarifaiService) {
 
     return {
       getCoordinates: function (exif) {
@@ -19,13 +19,13 @@ angular.module('stasiator.services', [])
       },
 
       addMap: function (lat, long) {
-        var map;
         debugger;
+        var map;
         if (typeof(map) == 'object') {
           map.off();
           map.remove();
         }
-        map = L.map('map');
+        map = L.map('#map');
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
           attribution: 'Craft Academy Labs',
           maxZoom: 18,
@@ -55,15 +55,12 @@ angular.module('stasiator.services', [])
         //$timeout(function () {
           getFileContentAsBase64(path, function (response) {
             var encodedImage = response.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
-            app.models.predict(Clarifai.GENERAL_MODEL, {base64: encodedImage})
+            app.models.predict(Clarifai.NSFW_MODEL, {base64: encodedImage})
               .then(
                 function (response) {
-                  //console.log(response);
                   var object = JSON.parse(response.request.responseText).outputs[0];
                   console.log(object);
-                  var tags = getKeywords(object);
-                  console.log(tags);
-                  //return tags;
+                  var tags = getSFWStatus(object);
                   deferred.resolve(tags);
                 },
                 function (err) {
@@ -96,10 +93,10 @@ angular.module('stasiator.services', [])
       }
     }
 
-    function getKeywords(object) {
+    function getSFWStatus(object) {
       var keywords = [];
-      angular.forEach(object.data.concepts, function (value, key) {
-        keywords.push(value.name)
+      angular.forEach(object.data.concepts, function (entry, key) {
+        keywords.push({name: entry.name, value: entry.value})
       });
       return keywords;
     }
