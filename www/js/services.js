@@ -1,50 +1,55 @@
 angular.module('stasiator.services', [])
 
-  .service('LocationService', function (ClarifaiService) {
+  .service('LocationService', function (ClarifaiService, $q) {
 
     return {
       getCoordinates: function (exif) {
-        $longitude = (exif.GPSLongitude[0] + exif.GPSLongitude[1] / 60 + exif.GPSLongitude[2] / 3600);
-        if (exif.GPSLongitudeRef === "W") {
-          $longitude = -($longitude);
-        }
-        $latitude = (exif.GPSLatitude[0] + exif.GPSLatitude[1] / 60 + exif.GPSLatitude[2] / 3600);
+        var deferred = $q.defer();
+        var coords;
+        if (exif.GPSLatitude) {
+          $longitude = (exif.GPSLongitude[0] + exif.GPSLongitude[1] / 60 + exif.GPSLongitude[2] / 3600);
+          if (exif.GPSLongitudeRef === "W") {
+            $longitude = -($longitude);
+          }
+          $latitude = (exif.GPSLatitude[0] + exif.GPSLatitude[1] / 60 + exif.GPSLatitude[2] / 3600);
 
-        if (exif.GPSLatitudeRef === "S") {
-          $latitude = -($latitude);
+          if (exif.GPSLatitudeRef === "S") {
+            $latitude = -($latitude);
+          }
+          coords = {lat: $latitude, long: $longitude}
+          deferred.resolve(coords);
+        } else {
+          coords = {lat: 0, long: 0};
+          deferred.resolve(coords);
         }
-        return {lat: $latitude, long: $longitude}
+        return deferred.promise;
+      },
 
+      initiateMap: function (element) {
+        var openStreetMap = L.tileLayer('http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
+          maxZoom: 16
+        });
+
+        map = new L.Map(element, {
+          layers: [openStreetMap],
+          attribution: 'Craft Academy Labs - Stasiator',
+          continuousWorld: true,
+          zoomControl: true
+        });
 
       },
 
-      addMap: function (lat, long) {
-        debugger;
-        var map;
-        if (typeof(map) == 'object') {
-          map.off();
-          map.remove();
-        }
-        map = L.map('#map');
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-          attribution: 'Craft Academy Labs',
-          maxZoom: 18,
-          id: 'mapbox.outdoors',
-          accessToken: 'pk.eyJ1IjoiYXF1YWFtYmVyIiwiYSI6ImNpejVreGVxNzAwNTEyeXBnbWc5eXNlcTYifQ.ah37yE5P2LH9LVzNelgymQ'
-        }).addTo(map);
-        map.setView([lat, long], 13);
+      addMarker: function (lat, long, map) {
         L.marker([lat, long]).addTo(map);
-
-        return map;
       }
     }
 
   })
 
 
-  .service('ClarifaiService', function ($q, $timeout) {
+  .service('ClarifaiService', function ($q) {
     return {
-      getKeywords: function (image) {
+      analyze: function (image, options) {
         var deferred = $q.defer();
         var path = image.src;
         var app = new Clarifai.App(
@@ -52,24 +57,20 @@ angular.module('stasiator.services', [])
           'HzTEezVKOnsWbR34JgUpuC4t6skZ8qh3zw6E6EYX'
         );
 
-        //$timeout(function () {
-          getFileContentAsBase64(path, function (response) {
-            var encodedImage = response.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
-            app.models.predict(Clarifai.NSFW_MODEL, {base64: encodedImage})
-              .then(
-                function (response) {
-                  var object = JSON.parse(response.request.responseText).outputs[0];
-                  console.log(object);
-                  var tags = getSFWStatus(object);
-                  deferred.resolve(tags);
-                },
-                function (err) {
-                  return err;
-                }
-              );
-          });
-        //}, 3000);
-        console.log(deferred.promise);
+        getFileContentAsBase64(path, function (response) {
+          var encodedImage = response.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
+          app.models.predict(options.model, {base64: encodedImage})
+            .then(
+              function (response) {
+                var object = JSON.parse(response.request.responseText).outputs[0];
+                var tags = getSFWStatus(object);
+                deferred.resolve(tags);
+              },
+              function (err) {
+                deferred.resolve(err);
+              }
+            );
+        });
         return deferred.promise;
       }
     };

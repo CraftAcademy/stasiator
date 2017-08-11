@@ -1,75 +1,81 @@
 angular.module('stasiator.controllers', [])
 
-.controller('imageCtrl', function($scope, $cordovaCamera, LocationService, ClarifaiService, $ionicLoading) {
-  var lat, long, image;
-  $scope.status = {
-    text: "",
-    tags: ""
-  };
+  .controller('imageCtrl', function ($scope, $cordovaCamera, LocationService, ClarifaiService, $ionicLoading, $q) {
+    var lat, long, image;
 
-  //Location.addBasicMap();
-
-
-  document.addEventListener("deviceready", function() {
-    var options = {
-      quality: 50,
-      destinationType: Camera.DestinationType.NATIVE_URI,
-      sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-      allowEdit: true,
-      targetWidth: 300,
-      targetHeight: 300,
-      popoverOptions: CameraPopoverOptions,
-      saveToPhotoAlbum: true
-    };
-
-    $scope.selectPicture = function() {
-      $scope.status = {
-        text: "",
-        tags: ""
+    document.addEventListener("deviceready", function () {
+      var options = {
+        quality: 50,
+        destinationType: Camera.DestinationType.NATIVE_URI,
+        sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+        allowEdit: true,
+        targetWidth: 300,
+        targetHeight: 300,
+        popoverOptions: CameraPopoverOptions,
+        saveToPhotoAlbum: true
       };
-      $cordovaCamera.getPicture(options)
-        .then(function(imageData) {
-          getPictureSuccess(imageData);
-        })
-        .catch(function(e) {
-          getPictureError(e);
-        }, false);
-    };
 
-    var getPictureError = function(e) {
-      alert('Error getting image: ' + e);
-    };
-
-    var getPictureSuccess = function(imageData) {
-      var image = document.getElementById('image');
-      var exif;
-      $scope.imageLoaded = true;
-      image.src = imageData.replace("assets-library://", "cdvfile://localhost/assets-library/");
-      CordovaExif.readData(image.src, function(exifObject) {
-        exif = exifObject;
-        $scope.status.text = LocationService.getCoordinates(exif);
-        lat = $scope.status.text.lat;
-        long = $scope.status.text.long;
-        LocationService.addMap(lat, long);
-        $scope.$apply();
-      });
-    };
-  });
+      $scope.selectPicture = function () {
+        $scope.status = {
+          text: "",
+          tags: ""
+        };
+        $cordovaCamera.getPicture(options)
+          .then(function (imageData) {
+            getPictureSuccess(imageData).then(function (imageData) {
+              CordovaExif.readData(imageData, function (exifObject) {
+                LocationService.getCoordinates(exifObject).then(function (coords) {
+                  $scope.status.text = coords;
+                  lat = $scope.status.text.lat;
+                  long = $scope.status.text.long;
+                  document.getElementById('map-container').innerHTML = "<div id='map'></div>";
+                  LocationService.initiateMap('map');
+                  map.setView([lat, long], 8, {
+                    reset: true
+                  });
+                  LocationService.addMarker(lat, long, map);
+                });
 
 
-  $scope.getKeywords = function() {
-    $ionicLoading.show({
-      template: 'Analyzing image...'
+                $scope.$apply();
+              });
+            });
+          })
+          .catch(function (e) {
+            getPictureError(e);
+          }, false);
+      };
+
+      function getPictureError(e) {
+        alert('Error getting image: ' + e);
+      };
+
+      function getPictureSuccess(imageData) {
+        var deferred = $q.defer();
+        var image = document.getElementById('image');
+        $scope.imageLoaded = true;
+        image.src = imageData.replace("assets-library://", "cdvfile://localhost/assets-library/");
+        $scope.status.text = "Getting location...";
+        deferred.resolve(image.src);
+        console.log(deferred.promise);
+        return deferred.promise;
+      }
     });
-    var image = document.getElementById('image');
-    ClarifaiService.getKeywords(image)
-      .then(function(resp) {
-        $scope.status.tags = resp;
-        $ionicLoading.hide();
-      }, function(error) {
-        $scope.status.tags = error;
-        $ionicLoading.hide();
-      });
-  }
 
-});
+
+    $scope.getKeywords = function () {
+      $ionicLoading.show({
+        template: 'Analyzing image...'
+      });
+      var image = document.getElementById('image');
+      ClarifaiService.analyze(image, {model: Clarifai.NSFW_MODEL})
+        .then(function (resp) {
+          $scope.status.tags = resp;
+          $ionicLoading.hide();
+        }, function (error) {
+          $scope.status.tags = error;
+          $ionicLoading.hide();
+        });
+    }
+
+  });

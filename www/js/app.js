@@ -2,6 +2,7 @@ angular.module('stasiator',
   ['ionic',
     'stasiator.controllers',
     'stasiator.services',
+    'stasiator.filters',
     'ngCordova', 'base64'])
 
   .run(function ($ionicPlatform) {

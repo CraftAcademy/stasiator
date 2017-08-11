@@ -28,9 +28,9 @@
 
   <!-- ionic/angularjs js -->
   <script src="lib/ionic/js/ionic.bundle.js"></script>
-  <script src="lib/leaflet/leaflet.js"></script>
   <script type="text/javascript" src="https://sdk.clarifai.com/js/clarifai-2.0.9.js"></script>
   <script src="lib/angular-base64/angular-base64.js"></script>
+  <script src="lib/leaflet/leaflet.js"></script>
 
   <!-- cordova script (this will be a 404 during development) -->
   <script src="lib/ngCordova/dist/ng-cordova.js"></script>
@@ -40,6 +40,7 @@
   <script src="js/app.js"></script>
   <script src="js/controllers.js"></script>
   <script src="js/services.js"></script>
+  <script src="js/filters.js"></script>
 
 </head>
 <body ng-app="stasiator">
@@ -50,14 +51,21 @@
   </ion-header-bar>
 
   <ion-content class="padding" ng-controller="imageCtrl">
-    <div id="map"></div>
+
     <div id="over_map">
       <button class="button button-calm button-full" ng-click="selectPicture()">Select Image</button>
-      <p ng-if="status.text">Text: {{status.text}}</p>
-      <p ng-if="status.tags">Tags: {{status.tags}}</p>
+      <!--<p ng-if="status.text">Text: {{status.text}}</p>-->
+      <div ng-if="status.tags" ng-repeat="tag in status.tags | limitTo: 5">
+        <p>{{tag.name | capitalize}}
+          <span>{{tag.value | percentage:2}}</span></p>
+      </div>
+
       <img id="image">
-      <button class="button button-calm button-full"  ng-if="imageLoaded" ng-click="getKeywords()">Analyze</button>
+      <button class="button button-calm button-full" ng-if="imageLoaded" ng-click="getKeywords()">Analyze</button>
     </div>
+    <div id="map-container">
+    </div>
+
 
   </ion-content>
 
