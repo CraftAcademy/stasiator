@@ -12,3 +12,10 @@ At this point i'm accessing the images [EXIF data](https://en.wikipedia.org/wiki
 
 ### Issues
 For now, I can't get the Leaflet map to show on the IOS page (that part can be tried in with `ionic serve`)
+
+
+### Emulator with live reload and console output
+
+```
+$ ionic emulate ios -l -c
+```
